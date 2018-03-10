@@ -1,7 +1,7 @@
 #include <stdio.h>
 
 
-int one_zero(int x)
+int to_one_zero(int x)
 {
 	if (x) return 1;
 	else return 0;
@@ -10,8 +10,8 @@ int one_zero(int x)
 
 int and(int x1, int x2)
 {
-	x1 = one_zero(x1);
-	x2 = one_zero(x2);
+	x1 = to_one_zero(x1);
+	x2 = to_one_zero(x2);
 	int w1 = 1, w2 = 1, b = -1;
 	int y = b + x1*w1 + x2*w2;
 	if (y > 0) return 1;
@@ -21,16 +21,34 @@ int and(int x1, int x2)
 
 int nand(int x1, int x2)
 {
-	return (1- and(x1, x2));
+	return (1 - and(x1, x2));
 }
 
 
 int or(int x1, int x2)
 {
-	x1 = one_zero(x1);
-	x2 = one_zero(x2);
+	x1 = to_one_zero(x1);
+	x2 = to_one_zero(x2);
 	int w1 = 2, w2 = 2, b = -1;
 	int y = b + x1*w1 + x2*w2;
+	if (y > 0) return 1;
+	else return 0;
+}
+
+
+int nor(int x1, int x2)
+{
+	return (1 - or(x1, x2));
+}
+
+
+int xor(int x1, int x2)
+{
+	x1 = to_one_zero(x1);
+	x2 = to_one_zero(x2);
+	int s1 = nand(x1, x2);
+	int s2 = or(x1, x2);
+	int y = and(s1, s2);
 	if (y > 0) return 1;
 	else return 0;
 }
@@ -52,6 +70,16 @@ int main(void)
 	printf("OR(1,0)   = %d\n", or(1,0));
 	printf("OR(0,1)   = %d\n", or(0,1));
 	printf("OR(1,1)   = %d\n", or(1,1));
+
+	printf("NOR(0,0)  = %d\n", nor(0,0));
+	printf("NOR(1,0)  = %d\n", nor(1,0));
+	printf("NOR(0,1)  = %d\n", nor(0,1));
+	printf("NOR(1,1)  = %d\n", nor(1,1));
+
+	printf("XOR(0,0)  = %d\n", xor(0,0));
+	printf("XOR(1,0)  = %d\n", xor(1,0));
+	printf("XOR(0,1)  = %d\n", xor(0,1));
+	printf("XOR(1,1)  = %d\n", xor(1,1));
 
 	return 0;
 }
