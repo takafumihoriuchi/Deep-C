@@ -12,4 +12,4 @@
 
 ## Citation
 Deep-C is still at alpha stage, but citations are always welcome:
-> Takafumi Horiuchi. 2018. Deep-C: An open source deep learning library for C.
+> Takafumi Horiuchi. 2018. Deep-C: An open source deep learning library for C. https://github.com/takafumihoriuchi/Deep-C-library
