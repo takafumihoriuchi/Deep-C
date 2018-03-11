@@ -10,7 +10,7 @@
 - etc.
 
 ## Installing Deep-C
-`(not ready yet)`
+`(not ready yet, but comming soon!)`
 
 ## Citation
 Deep-C is still at pre-alpha stage, but citations are always welcome!
