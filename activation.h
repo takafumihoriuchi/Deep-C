@@ -17,3 +17,8 @@ double relu(double x)
 {
 	return fmax(0, x);
 }
+
+double identity(double x)
+{
+	return x;
+}
