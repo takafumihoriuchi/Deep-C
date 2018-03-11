@@ -1,37 +1,6 @@
 #include <stdio.h>
-#include <stdlib.h>
 #include "activation.h"
-
-
-void dot(int dim_in, int dim_out, double x[dim_out], double W[dim_in][dim_out], double a[dim_out])
-{
-	int i;
-	for (i=0; i<dim_out; i++) {
-		double a_tmp = 0;
-		int j;
-		for (j=0; j<dim_in; j++) {
-			a_tmp += x[j] * W[j][i];
-		}
-		a[i] = a_tmp;
-	}
-	return;
-}
-
-
-void add_bias(int dim, double a[dim], double b[dim])
-{
-	int i;
-	for (i=0; i<dim; i++) a[i] += b[i];
-	return;
-}
-
-
-void call_activation(int dim, double a[dim], double z[dim], double (*activation)(double))
-{
-	int i;
-	for (i=0; i<dim; i++) z[i] = activation(a[i]);
-	return;
-}
+#include "neural_net.h"
 
 
 int main(void)
@@ -43,7 +12,7 @@ int main(void)
 	double a1[3];
 	double z1[3];
 
-	dot(2, 3, x, W1, a1);
+	dot_xw(2, 3, x, W1, a1);
 	add_bias(3, a1, b1);
 	call_activation(3, a1, z1, sigmoid);
 
@@ -52,7 +21,7 @@ int main(void)
 	double a2[2];
 	double z2[2];
 
-	dot(3, 2, z1, W2, a2);
+	dot_xw(3, 2, z1, W2, a2);
 	add_bias(2, a2, b2);
 	call_activation(2, a2, z2, sigmoid);
 
@@ -61,7 +30,7 @@ int main(void)
 	double a3[2];
 	double y[2];
 
-	dot(2, 2, z2, W3, a3);
+	dot_xw(2, 2, z2, W3, a3);
 	add_bias(2, a3, b3);
 	call_activation(2, a3, y, identity);
 
