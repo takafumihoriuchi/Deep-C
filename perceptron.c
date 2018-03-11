@@ -8,14 +8,20 @@ int to_one_zero(int x)
 }
 
 
+int step(int x)
+{
+	if (x > 0) return 1;
+	else return 0;
+}
+
+
 int and(int x1, int x2)
 {
 	x1 = to_one_zero(x1);
 	x2 = to_one_zero(x2);
 	int w1 = 1, w2 = 1, b = -1;
 	int y = b + x1*w1 + x2*w2;
-	if (y > 0) return 1;
-	else return 0;
+	return step(y);
 }
 
 
@@ -31,8 +37,7 @@ int or(int x1, int x2)
 	x2 = to_one_zero(x2);
 	int w1 = 2, w2 = 2, b = -1;
 	int y = b + x1*w1 + x2*w2;
-	if (y > 0) return 1;
-	else return 0;
+	return step(y);
 }
 
 
@@ -49,8 +54,7 @@ int xor(int x1, int x2)
 	int s1 = nand(x1, x2);
 	int s2 = or(x1, x2);
 	int y = and(s1, s2);
-	if (y > 0) return 1;
-	else return 0;
+	return step(y);
 }
 
 
