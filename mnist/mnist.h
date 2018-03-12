@@ -2,14 +2,19 @@
 #include <stdlib.h>
 #include <unistd.h> // for read(), etc.
 #include <fcntl.h>  // for open(), etc.
+#include "pgmlib.h"
 
-#define IMAGE_FILE "./data/train-images.idx3-ubyte"
+#define TRAIN_IMAGE "./data/train-images.idx3-ubyte"
+#define TRAIN_LABEL "./data/train-labels.idx1-ubyte"
+#define TEST_IMAGE "./data/t10k-images.idx3-ubyte"
+#define TEST_LABEL "./data/t10k-labels.idx1-ubyte"
+
 #define NUM_IMAGES 60000
 #define SIZE 784
-#define LEN_DESC 4
+#define LEN_INFO 4
 
-int num[LEN_DESC];
-unsigned char image_char[NUM_IMAGES][SIZE];
+int info[LEN_INFO];
+unsigned char train_image[NUM_IMAGES][SIZE];
 
 
 void FlipLong(unsigned char * ptr)
@@ -35,24 +40,24 @@ void read_mnist()
     float f;
     unsigned char *ptr; 
     
-    if ((fd = open(IMAGE_FILE, O_RDONLY)) == -1) {
+    if ((fd = open(TRAIN_IMAGE, O_RDONLY)) == -1) {
         fprintf(stderr, "couldn't open image file");
         exit(-1);
     }
     
-    read(fd, num, LEN_DESC*sizeof(int));
+    read(fd, info, LEN_INFO*sizeof(int));
 
-    // read-in description
-    for (i=0; i<LEN_DESC; i++) { 
-        ptr = (unsigned char *)(num + i);
+    // read-in information about size of data
+    for (i=0; i<LEN_INFO; i++) { 
+        ptr = (unsigned char *)(info + i);
         FlipLong(ptr);
-        printf("%d\n", num[i]);
+        printf("%d\n", info[i]);
         ptr = ptr + sizeof(int);
     }
 
     // read-in mnist numbers
     for (i=0; i<NUM_IMAGES; i++) {
-        read(fd, image_char[i], SIZE*sizeof(unsigned char));
+        read(fd, train_image[i], SIZE*sizeof(unsigned char));
     }
 
     close(fd);
@@ -65,7 +70,7 @@ void print_mnist()
     for (i=0; i<NUM_IMAGES; i++) {
         printf("# image %d/%d\n", i+1, NUM_IMAGES);
         for (j=0; j<SIZE; j++) {
-            printf("%1.1f ", image_char[i][j] / 255.0);
+            printf("%1.1f ", train_image[i][j] / 255.0);
             if ((j+1) % 28 == 0) putchar('\n');
         }
         putchar('\n');
@@ -74,7 +79,7 @@ void print_mnist()
 
 
 // call before pgmlib.h/save_image() when saving mnist image
-// store image_char[][] into image[][][]
+// store train_image[][] into image[][][]
 void pack_mnist(int n)
 {
     int x, y;
@@ -84,7 +89,7 @@ void pack_mnist(int n)
 
     for (y=0; y<height[n]; y++) {
         for (x=0; x<width[n]; x++) {
-            image[n][x][y] = image_char[1][y * width[n] + x];
+            image[n][x][y] = train_image[1][y * width[n] + x];
         }
     }
 }

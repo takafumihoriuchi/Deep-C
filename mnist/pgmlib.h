@@ -9,8 +9,8 @@
 #define MAX_BUFFERSIZE 256
 #define MAX_NUM_OF_IMAGES 5
 
-unsigned char image[MAX_NUM_OF_IMAGES][MAX_IMAGESIZE][MAX_IMAGESIZE];
-int width[MAX_NUM_OF_IMAGES], height[MAX_NUM_OF_IMAGES];
+static unsigned char image[MAX_NUM_OF_IMAGES][MAX_IMAGESIZE][MAX_IMAGESIZE];
+static int width[MAX_NUM_OF_IMAGES], height[MAX_NUM_OF_IMAGES];
 
 void load_image(int n, char name[]);
 void save_image(int n, char name[]);
@@ -135,5 +135,4 @@ void init_image(int n, unsigned char value)
 	for (y=0; y<height[n]; y++)
 		for (x=0; x<width[n]; x++)
 			image[n][x][y] = value;
-
 }
