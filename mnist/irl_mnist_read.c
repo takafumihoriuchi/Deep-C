@@ -85,3 +85,4 @@ int main(void)
  *  MNIST Data file from http://yann.lecun.com/exdb/mnist/
  *  2006.10.25 A.Date 
  */
+// hello
