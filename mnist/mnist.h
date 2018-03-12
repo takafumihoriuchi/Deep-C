@@ -9,12 +9,16 @@
 #define TEST_IMAGE "./data/t10k-images.idx3-ubyte"
 #define TEST_LABEL "./data/t10k-labels.idx1-ubyte"
 
-#define NUM_IMAGES 60000
-#define SIZE 784
+#define NUM_TRAIN 60000
+#define NUM_TEST 10000
+#define SIZE 784 // 28 * 28
 #define LEN_INFO 4
 
 int info[LEN_INFO];
-unsigned char train_image[NUM_IMAGES][SIZE];
+unsigned char train_image[NUM_TRAIN][SIZE];
+unsigned char train_label[NUM_TRAIN][SIZE];
+unsigned char test_image[NUM_TEST][SIZE];
+unsigned char test_label[NUM_TEST][SIZE];
 
 
 void FlipLong(unsigned char * ptr)
@@ -34,19 +38,23 @@ void FlipLong(unsigned char * ptr)
 }
 
 
+// postcondition: mnist data will be stored in following array
+// train image -> train_image[][]
+// train label -> train_label[][]
+// test image -> test_image[][]
+// test label -> test_label[][]
 void read_mnist()
 {
     int i, j, k, fd;
-    float f;
     unsigned char *ptr; 
-    
+
     if ((fd = open(TRAIN_IMAGE, O_RDONLY)) == -1) {
         fprintf(stderr, "couldn't open image file");
         exit(-1);
     }
     
     read(fd, info, LEN_INFO*sizeof(int));
-
+    
     // read-in information about size of data
     for (i=0; i<LEN_INFO; i++) { 
         ptr = (unsigned char *)(info + i);
@@ -54,12 +62,12 @@ void read_mnist()
         printf("%d\n", info[i]);
         ptr = ptr + sizeof(int);
     }
-
+    
     // read-in mnist numbers
-    for (i=0; i<NUM_IMAGES; i++) {
+    for (i=0; i<NUM_TRAIN; i++) {
         read(fd, train_image[i], SIZE*sizeof(unsigned char));
     }
-
+    
     close(fd);
 }
 
@@ -67,8 +75,8 @@ void read_mnist()
 void print_mnist()
 {
     int i, j;
-    for (i=0; i<NUM_IMAGES; i++) {
-        printf("# image %d/%d\n", i+1, NUM_IMAGES);
+    for (i=0; i<NUM_TRAIN; i++) {
+        printf("# image %d/%d\n", i+1, NUM_TRAIN);
         for (j=0; j<SIZE; j++) {
             printf("%1.1f ", train_image[i][j] / 255.0);
             if ((j+1) % 28 == 0) putchar('\n');
