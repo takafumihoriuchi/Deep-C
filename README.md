@@ -7,6 +7,7 @@
 - perceptron
 - activation
 - neural network
+- mnist
 - etc.
 
 ## Installing Deep-C

@@ -1,16 +1,15 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <unistd.h> // read()
-#include <fcntl.h>  // open()
+#include <unistd.h> // for read(), etc.
+#include <fcntl.h>  // for open(), etc.
 
-#define IMAGE_FILE "./train-images.idx3-ubyte"
+#define IMAGE_FILE "./data/train-images.idx3-ubyte"
 #define NUM_IMAGES 60000
 #define SIZE 784
 #define LEN_DESC 4
 
-static int num[LEN_DESC];
-static unsigned char image_char[NUM_IMAGES][SIZE];
-static double image[NUM_IMAGES][SIZE];
+int num[LEN_DESC];
+unsigned char image_char[NUM_IMAGES][SIZE];
 
 
 void FlipLong(unsigned char * ptr)
@@ -66,23 +65,14 @@ void print_images()
     for (i=0; i<NUM_IMAGES; i++) {
         printf("# image %d/%d\n", i+1, NUM_IMAGES);
         for (j=0; j<SIZE; j++) {
-            image[i][j] = (double)image_char[i][j] / 255.0;
-            printf("%1.1f ", image[i][j]);
+            printf("%1.1f ", image_char[i][j] / 255.0);
             if ((j+1) % 28 == 0) putchar('\n');
         }
         putchar('\n');
     }
 }
 
-
-int main(void)
-{
-    read_images();
-    print_images();  
-}
-
 /*  
- *  MNIST Data file from http://yann.lecun.com/exdb/mnist/
- *  2006.10.25 A.Date 
+ MNIST Data file from http://yann.lecun.com/exdb/mnist/
+ 2006.10.25 A.Date 
  */
-// hello
