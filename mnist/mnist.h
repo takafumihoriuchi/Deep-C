@@ -12,13 +12,15 @@
 #define NUM_TRAIN 60000
 #define NUM_TEST 10000
 #define SIZE 784 // 28 * 28
-#define LEN_INFO 4
+#define LEN_INFO_IMG 4
+#define LEN_INFO_LBL 2
 
-int info[LEN_INFO];
+int info_img[LEN_INFO_IMG];
+int info_lbl[LEN_INFO_LBL];
 unsigned char train_image[NUM_TRAIN][SIZE];
-unsigned char train_label[NUM_TRAIN];
+unsigned char train_label[NUM_TRAIN][1];
 unsigned char test_image[NUM_TEST][SIZE];
-unsigned char test_label[NUM_TEST];
+unsigned char test_label[NUM_TEST][1];
 
 
 void FlipLong(unsigned char * ptr)
@@ -48,13 +50,13 @@ void read_mnist_image(char *file_path, int num_data, unsigned char data_image[][
         exit(-1);
     }
     
-    read(fd, info, LEN_INFO*sizeof(int));
+    read(fd, info_img, LEN_INFO_IMG*sizeof(int));
     
     // read-in information about size of data
-    for (i=0; i<LEN_INFO; i++) { 
-        ptr = (unsigned char *)(info + i);
+    for (i=0; i<LEN_INFO_IMG; i++) { 
+        ptr = (unsigned char *)(info_img + i);
         FlipLong(ptr);
-        printf("%d\n", info[i]);
+        printf("%d\n", info_img[i]);
         ptr = ptr + sizeof(int);
     }
     
@@ -67,15 +69,50 @@ void read_mnist_image(char *file_path, int num_data, unsigned char data_image[][
 }
 
 
+void read_mnist_label(char *file_path, int num_data, unsigned char data_label[][1])
+{
+    int i, j, k, fd;
+    unsigned char *ptr; 
+
+    if ((fd = open(file_path, O_RDONLY)) == -1) {
+        fprintf(stderr, "couldn't open image file");
+        exit(-1);
+    }
+    
+    read(fd, info_lbl, LEN_INFO_LBL*sizeof(int));
+    
+    // read-in information about size of data
+    for (i=0; i<LEN_INFO_LBL; i++) { 
+        ptr = (unsigned char *)(info_lbl + i);
+        FlipLong(ptr);
+        printf("%d\n", info_lbl[i]);
+        ptr = ptr + sizeof(int);
+    }
+    
+    // read-in mnist numbers
+    for (i=0; i<num_data; i++) {
+        read(fd, data_label[i], sizeof(unsigned char));
+    }
+    
+    close(fd);
+}
+
+
 // postcondition: mnist data will be stored in following array
 // train image -> train_image[][]
 // train label -> train_label[][]
-// test image -> test_image[][]
-// test label -> test_label[][]
+// test image  -> test_image[][]
+// test label  -> test_label[][]
 void read_mnist()
 {
+    printf("\ntrain image\n");
     read_mnist_image(TRAIN_IMAGE, NUM_TRAIN, train_image);
+    printf("\ntest image\n");
     read_mnist_image(TEST_IMAGE, NUM_TEST, test_image);
+    printf("\ntrain label\n");
+    read_mnist_label(TRAIN_LABEL, NUM_TRAIN, train_label);
+    printf("\ntest label\n");
+    read_mnist_label(TEST_LABEL, NUM_TEST, test_label);
 }
 
 
@@ -104,7 +141,7 @@ void pack_mnist(int n)
 
     for (y=0; y<height[n]; y++) {
         for (x=0; x<width[n]; x++) {
-            image[n][x][y] = train_image[1][y * width[n] + x];
+            image[n][x][y] = train_image[0][y * width[n] + x];
         }
     }
 }
