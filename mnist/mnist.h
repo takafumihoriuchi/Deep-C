@@ -46,70 +46,49 @@ void FlipLong(unsigned char * ptr)
 }
 
 
-void read_mnist_image(char *file_path, int num_data, unsigned char data_image_char[][SIZE], double data_image[][SIZE])
+void read_mnist_char(char *file_path, int num_data, int len_info, int arr_n, unsigned char data_char[][arr_n], int info_arr[])
 {
     int i, j, k, fd;
-    unsigned char *ptr; 
+    unsigned char *ptr;
 
     if ((fd = open(file_path, O_RDONLY)) == -1) {
         fprintf(stderr, "couldn't open image file");
         exit(-1);
     }
     
-    read(fd, info_img, LEN_INFO_IMG*sizeof(int));
+    read(fd, info_arr, len_info * sizeof(int));
     
     // read-in information about size of data
-    for (i=0; i<LEN_INFO_IMG; i++) { 
-        ptr = (unsigned char *)(info_img + i);
+    for (i=0; i<len_info; i++) { 
+        ptr = (unsigned char *)(info_arr + i);
         FlipLong(ptr);
-        printf("%d\n", info_img[i]);
+        printf("%d\n", info_arr[i]);
         ptr = ptr + sizeof(int);
     }
     
     // read-in mnist numbers
     for (i=0; i<num_data; i++) {
-        read(fd, data_image_char[i], SIZE*sizeof(unsigned char));   
+        read(fd, data_char[i], arr_n * sizeof(unsigned char));   
     }
 
+    close(fd);
+}
+
+
+void image_char2double(int num_data, unsigned char data_image_char[][SIZE], double data_image[][SIZE])
+{
+    int i, j;
     for (i=0; i<num_data; i++)
         for (j=0; j<SIZE; j++)
-            data_image[i][j]  = (double)data_image_char[i][j] / 255.0;
-    
-    close(fd);
+            data_image[i][j]  = (double)data_image_char[i][j];// / 255.0;
 }
 
-
-void read_mnist_label(char *file_path, int num_data, unsigned char data_label_char[][1], int data_label[])
+void label_char2int(int num_data, unsigned char data_label_char[][1], int data_label[])
 {
-    int i, j, k, fd;
-    unsigned char *ptr; 
-
-    if ((fd = open(file_path, O_RDONLY)) == -1) {
-        fprintf(stderr, "couldn't open image file");
-        exit(-1);
-    }
-    
-    read(fd, info_lbl, LEN_INFO_LBL*sizeof(int));
-    
-    // read-in information about size of data
-    for (i=0; i<LEN_INFO_LBL; i++) { 
-        ptr = (unsigned char *)(info_lbl + i);
-        FlipLong(ptr);
-        printf("%d\n", info_lbl[i]);
-        ptr = ptr + sizeof(int);
-    }
-    
-    // read-in mnist numbers
-    for (i=0; i<num_data; i++) {
-        read(fd, data_label_char[i], sizeof(unsigned char));
-    }
-
+    int i;
     for (i=0; i<num_data; i++)
         data_label[i]  = (int)data_label_char[i][0];
-    
-    close(fd);
 }
-
 
 // postcondition: mnist data will be stored in following array
 // train image -> train_image[][] (type: double, each image of flat array)
@@ -118,14 +97,21 @@ void read_mnist_label(char *file_path, int num_data, unsigned char data_label_ch
 // test label  -> test_label[] (type: int)
 void read_mnist()
 {
-    printf("\ntrain image\n");
-    read_mnist_image(TRAIN_IMAGE, NUM_TRAIN, train_image_char, train_image);
-    printf("\ntest image\n");
-    read_mnist_image(TEST_IMAGE, NUM_TEST, test_image_char, test_image);
-    printf("\ntrain label\n");
-    read_mnist_label(TRAIN_LABEL, NUM_TRAIN, train_label_char, train_label);
-    printf("\ntest label\n");
-    read_mnist_label(TEST_LABEL, NUM_TEST, test_label_char, test_label);
+    // printf("\ntrain image\n");
+    read_mnist_char(TRAIN_IMAGE, NUM_TRAIN, LEN_INFO_IMG, SIZE, train_image_char, info_img);
+    image_char2double(NUM_TRAIN, train_image_char, train_image);
+
+    // printf("\ntest image\n");
+    read_mnist_char(TEST_IMAGE, NUM_TEST, LEN_INFO_IMG, SIZE, test_image_char, info_img);
+    image_char2double(NUM_TEST, test_image_char, test_image);
+    
+    // printf("\ntrain label\n");
+    read_mnist_char(TRAIN_LABEL, NUM_TRAIN, LEN_INFO_LBL, 1, train_label_char, info_lbl);
+    label_char2int(NUM_TRAIN, train_label_char, train_label);
+    
+    // printf("\ntest label\n");
+    read_mnist_char(TEST_LABEL, NUM_TEST, LEN_INFO_LBL, 1, test_label_char, info_lbl);
+    label_char2int(NUM_TEST, test_label_char, test_label);
 }
 
 
@@ -135,7 +121,7 @@ void print_mnist()
     for (i=0; i<NUM_TRAIN; i++) {
         printf("# image %d/%d\n", i+1, NUM_TRAIN);
         for (j=0; j<SIZE; j++) {
-            printf("%1.1f ", train_image[i][j] / 255.0);
+            printf("%1.1f ", train_image[i][j]);
             if ((j+1) % 28 == 0) putchar('\n');
         }
         putchar('\n');
@@ -154,7 +140,7 @@ void pack_mnist(int n)
 
     for (y=0; y<height[n]; y++) {
         for (x=0; x<width[n]; x++) {
-            image[n][x][y] = train_image[0][y * width[n] + x];
+            image[n][x][y] = train_image[59999][y * width[n] + x];
         }
     }
 }
