@@ -16,9 +16,9 @@
 
 int info[LEN_INFO];
 unsigned char train_image[NUM_TRAIN][SIZE];
-unsigned char train_label[NUM_TRAIN][SIZE];
+unsigned char train_label[NUM_TRAIN];
 unsigned char test_image[NUM_TEST][SIZE];
-unsigned char test_label[NUM_TEST][SIZE];
+unsigned char test_label[NUM_TEST];
 
 
 void FlipLong(unsigned char * ptr)
@@ -38,17 +38,12 @@ void FlipLong(unsigned char * ptr)
 }
 
 
-// postcondition: mnist data will be stored in following array
-// train image -> train_image[][]
-// train label -> train_label[][]
-// test image -> test_image[][]
-// test label -> test_label[][]
-void read_mnist()
+void read_mnist_image(char *file_path, int num_data, unsigned char data_image[][SIZE])
 {
     int i, j, k, fd;
     unsigned char *ptr; 
 
-    if ((fd = open(TRAIN_IMAGE, O_RDONLY)) == -1) {
+    if ((fd = open(file_path, O_RDONLY)) == -1) {
         fprintf(stderr, "couldn't open image file");
         exit(-1);
     }
@@ -64,11 +59,23 @@ void read_mnist()
     }
     
     // read-in mnist numbers
-    for (i=0; i<NUM_TRAIN; i++) {
-        read(fd, train_image[i], SIZE*sizeof(unsigned char));
+    for (i=0; i<num_data; i++) {
+        read(fd, data_image[i], SIZE*sizeof(unsigned char));
     }
     
     close(fd);
+}
+
+
+// postcondition: mnist data will be stored in following array
+// train image -> train_image[][]
+// train label -> train_label[][]
+// test image -> test_image[][]
+// test label -> test_label[][]
+void read_mnist()
+{
+    read_mnist_image(TRAIN_IMAGE, NUM_TRAIN, train_image);
+    read_mnist_image(TEST_IMAGE, NUM_TEST, test_image);
 }
 
 
