@@ -7,7 +7,7 @@ int main(void)
 	// train label -> train_label[60000]      (type: int)
 	// test image  -> test_image[10000][784]  (type: double, normalized, flattened)
 	// test label  -> test_label[10000]       (type: int)
-	read_mnist();
+	load_mnist();
 
 	// print the pixel values of mnist images to stdout
 	print_mnist_pixel(test_image, NUM_TEST);
