@@ -17,10 +17,16 @@
 
 int info_img[LEN_INFO_IMG];
 int info_lbl[LEN_INFO_LBL];
-unsigned char train_image[NUM_TRAIN][SIZE];
-unsigned char train_label[NUM_TRAIN][1];
-unsigned char test_image[NUM_TEST][SIZE];
-unsigned char test_label[NUM_TEST][1];
+
+unsigned char train_image_char[NUM_TRAIN][SIZE];
+unsigned char train_label_char[NUM_TRAIN][1];
+unsigned char test_image_char[NUM_TEST][SIZE];
+unsigned char test_label_char[NUM_TEST][1];
+
+double train_image[NUM_TRAIN][SIZE];
+int  train_label[NUM_TRAIN];
+double test_image[NUM_TEST][SIZE];
+int test_label[NUM_TEST];
 
 
 void FlipLong(unsigned char * ptr)
@@ -40,7 +46,7 @@ void FlipLong(unsigned char * ptr)
 }
 
 
-void read_mnist_image(char *file_path, int num_data, unsigned char data_image[][SIZE])
+void read_mnist_image(char *file_path, int num_data, unsigned char data_image_char[][SIZE], double data_image[][SIZE])
 {
     int i, j, k, fd;
     unsigned char *ptr; 
@@ -62,14 +68,18 @@ void read_mnist_image(char *file_path, int num_data, unsigned char data_image[][
     
     // read-in mnist numbers
     for (i=0; i<num_data; i++) {
-        read(fd, data_image[i], SIZE*sizeof(unsigned char));
+        read(fd, data_image_char[i], SIZE*sizeof(unsigned char));   
     }
+
+    for (i=0; i<num_data; i++)
+        for (j=0; j<SIZE; j++)
+            data_image[i][j]  = (double)data_image_char[i][j] / 255.0;
     
     close(fd);
 }
 
 
-void read_mnist_label(char *file_path, int num_data, unsigned char data_label[][1])
+void read_mnist_label(char *file_path, int num_data, unsigned char data_label_char[][1], int data_label[])
 {
     int i, j, k, fd;
     unsigned char *ptr; 
@@ -91,28 +101,31 @@ void read_mnist_label(char *file_path, int num_data, unsigned char data_label[][
     
     // read-in mnist numbers
     for (i=0; i<num_data; i++) {
-        read(fd, data_label[i], sizeof(unsigned char));
+        read(fd, data_label_char[i], sizeof(unsigned char));
     }
+
+    for (i=0; i<num_data; i++)
+        data_label[i]  = (int)data_label_char[i][0];
     
     close(fd);
 }
 
 
 // postcondition: mnist data will be stored in following array
-// train image -> train_image[][]
-// train label -> train_label[][]
-// test image  -> test_image[][]
-// test label  -> test_label[][]
+// train image -> train_image[][] (type: double, each image of flat array)
+// train label -> train_label[] (type: int)
+// test image  -> test_image[][] (type: double, each image of flat array)
+// test label  -> test_label[] (type: int)
 void read_mnist()
 {
     printf("\ntrain image\n");
-    read_mnist_image(TRAIN_IMAGE, NUM_TRAIN, train_image);
+    read_mnist_image(TRAIN_IMAGE, NUM_TRAIN, train_image_char, train_image);
     printf("\ntest image\n");
-    read_mnist_image(TEST_IMAGE, NUM_TEST, test_image);
+    read_mnist_image(TEST_IMAGE, NUM_TEST, test_image_char, test_image);
     printf("\ntrain label\n");
-    read_mnist_label(TRAIN_LABEL, NUM_TRAIN, train_label);
+    read_mnist_label(TRAIN_LABEL, NUM_TRAIN, train_label_char, train_label);
     printf("\ntest label\n");
-    read_mnist_label(TEST_LABEL, NUM_TEST, test_label);
+    read_mnist_label(TEST_LABEL, NUM_TEST, test_label_char, test_label);
 }
 
 
