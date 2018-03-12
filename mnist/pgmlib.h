@@ -15,9 +15,10 @@ int width[MAX_NUM_OF_IMAGES], height[MAX_NUM_OF_IMAGES];
 void load_image(int n, char name[]);
 void save_image(int n, char name[]);
 void copy_image(int n1, int n2);
-void init_image(int n, unsigned char value); //画像No.nの全画素の階調値を強制的にvalue(0~255)にする
+void init_image(int n, unsigned char value);
 
 
+// load image from existing "*.pgm" file
 void load_image(int n, char name[])
 {
 	char file_name[MAX_FILENAME];
@@ -82,6 +83,8 @@ void load_image(int n, char name[])
 	printf("image was read successfully.\n");
 }
 
+
+// name: path for saving image (ex: "./images/sample.pgm")
 void save_image(int n, char name[])
 {
 	char file_name[MAX_FILENAME];
@@ -109,6 +112,7 @@ void save_image(int n, char name[])
 		printf("Image was saved successfully\n");
 }
 
+
 //copy n1 to n2
 void copy_image(int n1, int n2)
 {
@@ -122,6 +126,8 @@ void copy_image(int n1, int n2)
 			image[n2][x][y] = image[n1][x][y];
 }
 
+
+// set all pixel of image no.'n' to 'value' (0 ~ 255)
 void init_image(int n, unsigned char value)
 {
 	int x, y;

@@ -29,7 +29,7 @@ void FlipLong(unsigned char * ptr)
 }
 
 
-void read_images()
+void read_mnist()
 {
     int i, j, k, fd;
     float f;
@@ -59,7 +59,7 @@ void read_images()
 }
 
 
-void print_images()
+void print_mnist()
 {
     int i, j;
     for (i=0; i<NUM_IMAGES; i++) {
@@ -72,7 +72,25 @@ void print_images()
     }
 }
 
+
+// call before pgmlib.h/save_image() when saving mnist image
+// store image_char[][] into image[][][]
+void pack_mnist(int n)
+{
+    int x, y;
+
+    width[n] = 28;
+    height[n] = 28;
+
+    for (y=0; y<height[n]; y++) {
+        for (x=0; x<width[n]; x++) {
+            image[n][x][y] = image_char[1][y * width[n] + x];
+        }
+    }
+}
+
+
 /*  
- MNIST Data file from http://yann.lecun.com/exdb/mnist/
- 2006.10.25 A.Date 
- */
+MNIST Data file from http://yann.lecun.com/exdb/mnist/
+2006.10.25 A.Date 
+*/
