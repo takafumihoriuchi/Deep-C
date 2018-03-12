@@ -18,7 +18,34 @@ double relu(double x)
 	return fmax(0, x);
 }
 
+
 double identity(double x)
 {
 	return x;
+}
+
+
+// n: length of array
+// a: input array
+// z: output array (elements of 'a' after softmax activation) 
+void softmax(int n, double a[n], double z[n])
+{
+	int i;
+
+	double max = a[0];
+	for (i=1; i<n; i++)
+		if (a[i] > max)
+			max = a[i];
+
+	for (i=0; i<n; i++)
+		a[i] -= max;
+
+	double sum_exp = 0;
+	for (i=0; i<n; i++)
+		sum_exp += exp(a[i]);
+
+	for (i=0; i<n; i++)
+		z[i] = exp(a[i]) / sum_exp;
+
+	return;
 }

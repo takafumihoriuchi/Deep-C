@@ -1,10 +1,12 @@
-void dot_xw(int dim_in, int dim_out, double x[dim_out], double W[dim_in][dim_out], double a[dim_out])
+// calculate inner product of x[n_in] and W[n_in][n_out]
+// resulting array in form of a[n_out]
+void dot_xw(int n_in, int n_out, double x[n_out], double W[n_in][n_out], double a[n_out])
 {
 	int i;
-	for (i=0; i<dim_out; i++) {
+	for (i=0; i<n_out; i++) {
 		double a_tmp = 0;
 		int j;
-		for (j=0; j<dim_in; j++) {
+		for (j=0; j<n_in; j++) {
 			a_tmp += x[j] * W[j][i];
 		}
 		a[i] = a_tmp;
@@ -13,17 +15,23 @@ void dot_xw(int dim_in, int dim_out, double x[dim_out], double W[dim_in][dim_out
 }
 
 
-void add_bias(int dim, double a[dim], double b[dim])
+// n: length of array
+// a: input array
+// b: array of bias
+void add_bias(int n, double a[n], double b[n])
 {
 	int i;
-	for (i=0; i<dim; i++) a[i] += b[i];
+	for (i=0; i<n; i++) a[i] += b[i];
 	return;
 }
 
 
-void call_activation(int dim, double a[dim], double z[dim], double (*activation)(double))
+// n: length of array
+// a: input array
+// z: output array
+void call_activation(int n, double a[n], double z[n], double (*activation)(double))
 {
 	int i;
-	for (i=0; i<dim; i++) z[i] = activation(a[i]);
+	for (i=0; i<n; i++) z[i] = activation(a[i]);
 	return;
 }
