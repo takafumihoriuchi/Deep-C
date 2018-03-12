@@ -71,7 +71,6 @@ void print_images()
             if ((j+1) % 28 == 0) putchar('\n');
         }
         putchar('\n');
-        break;
     }
 }
 
