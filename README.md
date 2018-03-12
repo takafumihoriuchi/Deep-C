@@ -3,7 +3,7 @@
 
 **Deep-C** is an open source deep learning library for C. It is currently at pre-alpha stage. Progress will be made within a few days.
 
-## Models
+## Library
 - perceptron
 - activation
 - neural network
