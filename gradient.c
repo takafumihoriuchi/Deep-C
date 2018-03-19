@@ -90,17 +90,17 @@ void randn(int n1, int n2, double W[n1][n2])
 {
     srand((unsigned)time(NULL));
 
-    double sum = 0;
     int i, j;
-    bool stock = false;
     double x, y, z1, z2;
+    bool stock = false;
     for (i=0; i<n1; i++) {
         for (j=0; j<n2; j++) {
+            // HACK: necessary to use both in pair ??
             if (stock) {
                 W[i][j] = z2;
                 stock = false;
             } else {
-                // generate normal distribution by Box–Muller transform
+                // generate standardized normal distribution by Box–Muller transform
                 x  = (double)rand() / RAND_MAX;
                 y  = (double)rand() / RAND_MAX;
                 z1 = sqrt(-2 * log(x)) * cos(2 * M_PI * y);
@@ -108,47 +108,8 @@ void randn(int n1, int n2, double W[n1][n2])
                 W[i][j] = z1;
                 stock = true;
             }
-            printf("W[%d][%d]: %f\n", i, j, W[i][j]);
-            sum += W[i][j];
         }
     }
-    double average = sum / n1 * n2;
-
-    double ssd = 0;
-    for (i=0; i<n1; i++) {
-        for (j=0; j<n2; j++) {
-            ssd += pow(W[i][j] - average, 2);
-        }
-    }
-    double variance = ssd / n1 * n2;
-    double stdev = sqrt(variance);
-
-    for (i=0; i<n1; i++) {
-        for (j=0; j<n2; j++) {
-            W[i][j] = (W[i][j] - average) / stdev;
-        }
-    }
-
-
-    printf("average = %f\n", average);
-    printf("stdev   = %f\n", stdev);
-    sum = 0;
-    for (i=0; i<n1; i++) {
-        for (j=0; j<n2; j++) {
-            sum += W[i][j];
-        }
-    }
-    average = sum / n1 * n2;
-    printf("average = %f\n", average);
-    ssd = 0;
-    for (i=0; i<n1; i++) {
-        for (j=0; j<n2; j++) {
-            ssd += pow(W[i][j] - average, 2);
-        }
-    }
-    variance = ssd / n1 * n2;
-    stdev = sqrt(variance);
-    printf("stdev   = %f\n", stdev);
 
 }
 
@@ -172,7 +133,6 @@ int main(void)
     printf("array([%f, %f])\n", x[0], x[1]);
     free(x);
 
-    /*
     // simple neural network
     double W[2][3];
     randn(2, 3, W);
@@ -182,15 +142,6 @@ int main(void)
             printf("W[%d][%d]: %f\n", i, j, W[i][j]);
         }
     }
-    */
-    double W[100][100];
-    randn(100, 100, W);
-    //int i, j;
-    //for (i=0; i<10; i++) {
-    //    for (j=0; j<10; j++) {
-    //        printf("W[%d][%d]: %f\n", i, j, W[i][j]);
-    //    }
-    //}
 
     return 0;
 }
