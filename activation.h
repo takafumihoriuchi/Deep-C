@@ -27,7 +27,7 @@ double identity(double x)
 
 // n: length of array
 // a: input array
-// z: output array (elements of 'a' after softmax activation) 
+// z: output array (elements of 'a' after softmax activation)
 void softmax(int n, double a[n], double z[n])
 {
 	int i;

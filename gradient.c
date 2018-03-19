@@ -3,6 +3,7 @@
 #include <math.h>
 #include <time.h>
 #include <stdbool.h>
+#include "./loss_function.h"
 
 
 void check_malloc(double *p) {
@@ -115,7 +116,7 @@ void randn(int n1, int n2, double W[n1][n2])
 // expects free(a) in caller
 double *dot(int nin, int nout, double x[nin], double W[nin][nout])
 {
-    double *a = malloc(sizeof(double) * nin);
+    double *a = malloc(sizeof(double) * nout);
     check_malloc(a);
 
     int i, j;
@@ -131,13 +132,47 @@ double *dot(int nin, int nout, double x[nin], double W[nin][nout])
 }
 
 
+// expects free(a) in caller
 double *predict(int nin, int nout, double x[nin], double W[nin][nout])
 {
     return dot(nin, nout, x, W);
 }
 
 
-double 
+// expects free(z) in caller
+double *softmax(int n, double a[n])
+{
+    double *z = malloc(sizeof(double) * n);
+    check_malloc(z);
+
+    int i;
+
+    double max = a[0];
+    for (i=1; i<n; i++)
+        if (a[i] > max)
+            max = a[i];
+
+    for (i=0; i<n; i++)
+        a[i] -= max;
+
+    double sum_exp = 0;
+    for (i=0; i<n; i++)
+        sum_exp += exp(a[i]);
+
+    for (i=0; i<n; i++)
+        z[i] = exp(a[i]) / sum_exp;
+
+    return z;
+}
+
+
+double loss(int nin, int nout, double x[nin], double t[nin], double W[nin][nout])
+{
+    double *z = predict(nin, nout, x, W);
+    double *y = softmax(nout, z);
+    double loss = cross_entropy_error(nout, y, t);
+    return loss;
+}
 
 
 int main(void)
@@ -149,18 +184,19 @@ int main(void)
     
     // gradient
     double array[2] = {3.0, 0.0};
-    double *p = numeriacal_gradient(function_2, 2, array);
-    printf("array([%0.1f, %0.1f])\n", p[0], p[1]);
-    free(p);
+    double *p1 = numeriacal_gradient(function_2, 2, array);
+    printf("array([%0.1f, %0.1f])\n", p1[0], p1[1]);
+    free(p1);
 
     // gradient descent
     double init_x[] = {-3.0, 4.0};
-    double *x = gradient_descent(function_2, 2, init_x, 0.1, 100);
-    printf("array([%f, %f])\n", x[0], x[1]);
-    free(x);
+    double *x2 = gradient_descent(function_2, 2, init_x, 0.1, 100);
+    printf("array([%f, %f])\n", x2[0], x2[1]);
+    free(x2);
 
     // simple neural network
     double W[2][3];
+    // double W[2][3] = {{0.47355232, 0.9977393, 0.84668094}, {0.85557411, 0.03563661, 0.69422093}};
     randn(2, 3, W);
     int i, j;
     for (i=0; i<2; i++) {
@@ -168,6 +204,15 @@ int main(void)
             printf("W[%d][%d]: %f\n", i, j, W[i][j]);
         }
     }
+    double x[2] = {0.6, 0.9};
+    double *p = predict(2, 3, x, W);
+    printf("p[0]: %f\n", p[0]);
+    printf("p[1]: %f\n", p[1]);
+    printf("p[2]: %f\n", p[2]);
+    double t[3] = {0.0, 0.0, 1.0};
+    double loss_amt = loss(2, 3, x, t, W);
+    printf("loss_amt: %f\n", loss_amt);
+    free(p);
 
     return 0;
 }
