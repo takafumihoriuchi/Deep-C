@@ -89,10 +89,9 @@ double *gradient_descent(double (*function)(double *), int n, double init_x[n], 
 void randn(int n1, int n2, double W[n1][n2])
 {
     srand((unsigned)time(NULL));
-
-    int i, j;
     double x, y, z1, z2;
     bool stock = false;
+    int i, j;
     for (i=0; i<n1; i++) {
         for (j=0; j<n2; j++) {
             // HACK: necessary to use both in pair ??
@@ -110,8 +109,35 @@ void randn(int n1, int n2, double W[n1][n2])
             }
         }
     }
-
 }
+
+
+// expects free(a) in caller
+double *dot(int nin, int nout, double x[nin], double W[nin][nout])
+{
+    double *a = malloc(sizeof(double) * nin);
+    check_malloc(a);
+
+    int i, j;
+    for (i=0; i<nout; i++) {
+        double a_tmp = 0;
+        for (j=0; j<nin; j++) {
+            a_tmp += x[j] * W[j][i];
+        }
+        a[i] = a_tmp;
+    }
+
+    return a;
+}
+
+
+double *predict(int nin, int nout, double x[nin], double W[nin][nout])
+{
+    return dot(nin, nout, x, W);
+}
+
+
+double 
 
 
 int main(void)
