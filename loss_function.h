@@ -1,3 +1,6 @@
+#ifndef LOSS_FUNCTION_H
+#define LOSS_FUNCTION_H
+
 #include <math.h>
 
 
@@ -29,3 +32,6 @@ double cross_entropy_error(int n, double y[n], double t[n])
 
 	return sum * (-1);
 }
+
+
+#endif

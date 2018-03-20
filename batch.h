@@ -1,3 +1,6 @@
+#ifndef BATCH_H
+#define BATCH_H
+
 #include <stdlib.h>
 #include <time.h>
 
@@ -17,3 +20,6 @@ int *random_arrary()
 
 	return batch;
 }
+
+
+#endif

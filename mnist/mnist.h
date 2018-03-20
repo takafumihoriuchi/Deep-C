@@ -1,3 +1,6 @@
+#ifndef MNIST_H
+#define MNIST_H
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h> // for read(), etc.
@@ -157,6 +160,8 @@ void save_mnist_pgm(double data_image[][SIZE], int index)
     save_image(n, "");
 }
 
+
+#endif
 
 /*  
 MNIST Data file from http://yann.lecun.com/exdb/mnist/

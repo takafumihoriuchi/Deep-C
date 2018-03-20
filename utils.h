@@ -1,3 +1,6 @@
+#ifndef UTILS_H
+#define UTILS_H
+
 #include <stdlib.h>
 #include <math.h>
 #include <time.h>
@@ -110,3 +113,6 @@ void zeros(int n, double b[n])
 		b[i] = 0.0;
 	}
 }
+
+
+#endif

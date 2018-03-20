@@ -1,3 +1,7 @@
+#ifndef NEURAL_NET_H
+#define NEURAL_NET_H
+
+
 /*
 // calculate inner product of x[n_in] and W[n_in][n_out]
 // resulting array in form of a[n_out]
@@ -52,3 +56,6 @@ void call_activation(int n, double a[n], double z[n], double (*activation)(doubl
 	for (i=0; i<n; i++) z[i] = activation(a[i]);
 	return;
 }
+
+
+#endif

@@ -1,3 +1,6 @@
+#ifndef GRADIENT_H
+#define GRADIENT_H
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
@@ -48,6 +51,60 @@ double *numeriacal_gradient(double (*function)(double *), int n, double x[n])
 
         grad[i] = (fxh1 - fxh2) / (h * 2.0);
         x[i] = tmp_val;
+    }
+
+    return grad;
+}
+
+
+double *numeriacal_gradient_p(double (*loss_function), Network net, double *x, double *t, int n, double *param)
+{
+    double h = 1e-4;
+    double *grad = one_dim_double_malloc(n);
+
+    int i;
+    for (i=0; i<n; i++) {
+        
+        double tmp_val = param[i];
+        
+        param[i] = tmp_val + h;
+        double fxh1 = function(net, x, t);
+
+        param[i] = tmp_val - h;
+        double fxh2 = function(net, x, t);
+
+        grad[i] = (fxh1 - fxh2) / (h * 2.0);
+        param[i] = tmp_val;
+    }
+
+    return grad;
+}
+
+
+double **numeriacal_gradient_pp(double (*loss_function), Network net, double *x, double *t, int n_pp, int n_p, double **param)
+{
+    double h = 1e-4;
+
+    double **grad = two_dim_double_malloc(n_pp, n_p);
+
+    int i, j;
+    for (i=0; i<n_pp; i++) {
+
+        for (j=0; j<n_p; j++) {
+            
+            double tmp_val = param[i][j];
+        
+            param[i][j] = tmp_val + h;
+            double fxh1 = loss_function(net, x, t);
+
+            param[i][j] = tmp_val - h;
+            double fxh2 = loss_function(net, x, t);
+
+            grad[i][j] = (fxh1 - fxh2) / (h * 2.0);
+            param[i][j] = tmp_val;
+        
+        }
+
     }
 
     return grad;
@@ -137,3 +194,6 @@ double loss(int nin, int nout, double x[nin], double t[nout], double W[nin][nout
     double loss = cross_entropy_error(nout, y, t);
     return loss;
 }
+
+
+#endif

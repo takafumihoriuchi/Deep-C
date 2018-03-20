@@ -4,6 +4,7 @@
 #include "./neural_net.h"
 #include "./activation.h"
 #include "./loss_function.h"
+#include "./gradient.h"
 
 
 typedef struct Network {
@@ -42,6 +43,11 @@ Network init(int input_size, int hidden_size, int output_size, double weight_ini
 	zeros(net.hidden_size, net.b1);
 	randn(net.hidden_size, net.output_size, net.W2);
 	zeros(net.output_size, net.b2);
+
+	net.grad_W1 = two_dim_double_malloc(net.input_size, net.hidden_size);
+	net.grad_W2 = two_dim_double_malloc(net.hidden_size, net.output_size);
+	net.grad_b1 = one_dim_double_malloc(net.hidden_size);
+	net.grad_b2 = one_dim_double_malloc(net.output_size);
 
 	return net;
 }
@@ -84,6 +90,10 @@ void release_network(Network net)
 	free(net.b1);
 	free(net.W2);
 	free(net.b2);
+	free(net.grad_W1);
+	free(net.grad_b1);
+	free(net.grad_W2);
+	free(net.grad_b2);
 }
 
 
@@ -128,6 +138,15 @@ double calc_accuracy(Network net)
 }
 
 
+void calc_gradient(Network net, double x[net.input_size], double t[net.output_size])
+{
+	net.grad_W1 = numeriacal_gradient_pp(loss, net, x, t, net.input_size, net.hidden_size, net.W1);
+	net.grad_W2 = numeriacal_gradient_pp(loss, net, x, t, net.hidden_size, net.output_size, net.W2);
+	net.grad_b1 = numeriacal_gradient_p(loss, net, x, t, net.hidden_size, net.b1);
+	net.grad_b2 = numeriacal_gradient_p(loss, net, x, t, net.output_size, net.b2);
+}
+
+
 void two_layer_net()
 {
 	int input_size = 784;
@@ -149,8 +168,11 @@ void two_layer_net()
 	t[test_label[0]] = 1.0;
 
 	Network net = init(input_size, hidden_size, output_size, weight_init_std);
+	
 	double loss_amt = loss(net, x, t);
 	printf("loss amount of train_image[0]: %f\n", loss_amt);
+
+	calc_gradient(net, x, t);
 
 	double accuracy = calc_accuracy(net);
 	printf("train accuracy: %f\n", accuracy);

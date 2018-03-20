@@ -1,3 +1,6 @@
+#ifndef PGMLIB_H
+#define PGMLIB_H
+
 // gray scale image library
 #include <stdlib.h>
 #include <string.h>
@@ -136,3 +139,6 @@ void init_image(int n, unsigned char value)
 		for (x=0; x<width[n]; x++)
 			image[n][x][y] = value;
 }
+
+
+#endif

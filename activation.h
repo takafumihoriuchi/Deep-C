@@ -1,3 +1,6 @@
+#ifndef ACTIVATION_H
+#define ACTIVATION_H
+
 #include <math.h>
 
 
@@ -58,3 +61,6 @@ void softmax(int n, double a[n], double z[n])
 
 	return;
 }
+
+
+#endif
