@@ -11,10 +11,16 @@ typedef struct Network {
 	int hidden_size;
 	int output_size;
 	double weight_init_std;
+	// parameters:
 	double **W1;
 	double **W2;
 	double *b1;
 	double *b2;
+	// gradients:
+	double **grad_W1;
+	double **grad_W2;
+	double *grad_b1;
+	double *grad_b2;
 } Network;
 
 
@@ -27,26 +33,10 @@ Network init(int input_size, int hidden_size, int output_size, double weight_ini
 	net.output_size = output_size;
 	net.weight_init_std = weight_init_std;
 
-	net.W1 = (double **)malloc(sizeof(double *) * net.input_size);
-	check_malloc_double_p(net.W1);
-	int i;
-	for (i=0; i<net.input_size; i++) {
-		double *inner = (double *)malloc(sizeof(double) * net.hidden_size);
-		check_malloc_double(inner);
-		net.W1[i] = inner;
-	}
-	net.W2 = (double **)malloc(sizeof(double *) * net.hidden_size);
-	check_malloc_double_p(net.W2);
-	for (i=0; i<net.hidden_size; i++) {
-		double *inner = (double *)malloc(sizeof(double) * net.output_size);
-		check_malloc_double(inner);
-		net.W2[i] = inner;
-	}
-
-	net.b1 = (double *)malloc(sizeof(double) * net.hidden_size);
-	check_malloc_double(net.b1);
-	net.b2 = (double *)malloc(sizeof(double) * net.output_size);
-	check_malloc_double(net.b2);
+	net.W1 = two_dim_double_malloc(net.input_size, net.hidden_size);
+	net.W2 = two_dim_double_malloc(net.hidden_size, net.output_size);
+	net.b1 = one_dim_double_malloc(net.hidden_size);
+	net.b2 = one_dim_double_malloc(net.output_size);
 
 	randn(net.input_size, net.output_size, net.W1);
 	zeros(net.hidden_size, net.b1);
@@ -97,6 +87,47 @@ void release_network(Network net)
 }
 
 
+int max_index(int n, double arr[n])
+{
+	double max = arr[0];
+	int max_idx = 0;
+	int i;
+	for (i=1; i<n; i++) {
+		if (arr[i] > max) {
+			max = arr[i];
+			max_idx = i;
+		}
+	}
+	return max_idx;
+}
+
+
+double calc_accuracy(Network net)
+{
+	// train_image[NUM_TRAIN][SIZE]
+	// train_label[NUM_TRAIN]
+
+	// double one_hot_encoding[NUM_TRAIN][net.output_size];
+	
+	int num_correct = 0;
+
+	int i;
+	for (i=0; i<NUM_TRAIN; i++) {
+		// set label to one-hot-encoding
+		// zeros(net.output_size, one_hot_label[i]);
+		// one_hot_encoding[i][train_label[i]] = 1.0;
+		// predict
+		double *y = predict(net, train_image[i]);
+		int pred_label = max_index(net.output_size, y);
+		free(y);
+		if (pred_label == train_label[i]) num_correct++;
+	}
+
+	double accuracy = (double)num_correct / NUM_TRAIN;
+	return accuracy;
+}
+
+
 void two_layer_net()
 {
 	int input_size = 784;
@@ -113,12 +144,16 @@ void two_layer_net()
 	for (i=0; i<input_size; i++) {
 		x[i] = test_image[0][i];
 	}
+	// convert to one-hot-encoding
 	zeros(output_size, t);
 	t[test_label[0]] = 1.0;
 
 	Network net = init(input_size, hidden_size, output_size, weight_init_std);
 	double loss_amt = loss(net, x, t);
-	printf("loss_amt: %f\n", loss_amt);
+	printf("loss amount of train_image[0]: %f\n", loss_amt);
+
+	double accuracy = calc_accuracy(net);
+	printf("train accuracy: %f\n", accuracy);
 
 	release_network(net);
 }

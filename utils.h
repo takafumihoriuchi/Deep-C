@@ -20,6 +20,27 @@ void check_malloc_double_p(double **p)
 	}
 }
 
+double **two_dim_double_malloc(int n_pp, int n_p)
+{
+	double **pp = (double **)malloc(sizeof(double *) * n_pp);
+	check_malloc_double_p(pp);
+	int i;
+	for (i=0; i<n_pp; i++) {
+		double *p = (double *)malloc(sizeof(double) * n_p);
+		check_malloc_double(p);
+		pp[i] = p;
+	}
+	return pp;
+}
+
+
+double *one_dim_double_malloc(int n)
+{
+	double *p = (double *)malloc(sizeof(double) * n);
+	check_malloc_double(p);
+	return p;
+}
+
 
 int to_one_zero(int x)
 {
