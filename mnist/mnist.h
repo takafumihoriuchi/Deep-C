@@ -4,10 +4,10 @@
 #include <fcntl.h>  // for open(), etc.
 #include "pgmlib.h"
 
-#define TRAIN_IMAGE "./data/train-images.idx3-ubyte"
-#define TRAIN_LABEL "./data/train-labels.idx1-ubyte"
-#define TEST_IMAGE "./data/t10k-images.idx3-ubyte"
-#define TEST_LABEL "./data/t10k-labels.idx1-ubyte"
+#define TRAIN_IMAGE "./mnist/data/train-images.idx3-ubyte"
+#define TRAIN_LABEL "./mnist/data/train-labels.idx1-ubyte"
+#define TEST_IMAGE "./mnist/data/t10k-images.idx3-ubyte"
+#define TEST_LABEL "./mnist/data/t10k-labels.idx1-ubyte"
 
 #define SIZE 784 // 28*28
 #define NUM_TRAIN 60000
