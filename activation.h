@@ -13,6 +13,15 @@ double sigmoid(double x)
 }
 
 
+void sigmoid_arr(int n, double x[n])
+{
+	int i;
+	for (i=0; i<n; i++) {
+		x[i] = (1 / (1 + exp(x[i]*(-1))));
+	}
+}
+
+
 double relu(double x)
 {
 	return fmax(0, x);

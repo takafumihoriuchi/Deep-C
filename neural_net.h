@@ -1,6 +1,6 @@
 // calculate inner product of x[n_in] and W[n_in][n_out]
 // resulting array in form of a[n_out]
-void dot_xw(int n_in, int n_out, double x[n_out], double W[n_in][n_out], double a[n_out])
+void dot_xw(int n_in, int n_out, double x[n_in], double W[n_in][n_out], double a[n_out])
 {
 	int i;
 	for (i=0; i<n_out; i++) {
